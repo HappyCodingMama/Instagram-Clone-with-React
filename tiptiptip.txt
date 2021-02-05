@@ -1,0 +1,7 @@
+avatar 
+1. npm install @material-ui/core
+2. import Avatar from '@material-ui/core/Avatar';
+
+firebase
+1. npm i firebase
+2. setting on firebase website 

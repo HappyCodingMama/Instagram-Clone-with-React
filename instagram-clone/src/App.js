@@ -6,6 +6,7 @@ import { db, auth } from './firebase';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Input } from '@material-ui/core';
+import ImageUpload from './ImageUpload';
 
 // Modal start
 
@@ -39,6 +40,7 @@ function App() {
 
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openSignIn, setOpenSignIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -92,10 +94,28 @@ function App() {
         });
       })
       .catch(error => alert(error.message));
+
+    setOpen(false);
+  };
+
+  const signIn = event => {
+    event.preventDefault();
+
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .catch(error => alert(error.message));
+
+    setOpenSignIn(false);
   };
 
   return (
     <div className='app'>
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName} />
+      ) : (
+        <h3>Sorry you need to login to upload</h3>
+      )}
+
       <Modal open={open} onClose={() => setOpen(false)}>
         <div style={modalStyle} className={classes.paper}>
           <form className='app__signup'>
@@ -125,11 +145,41 @@ function App() {
         </div>
       </Modal>
 
+      <Modal open={openSignIn} onClose={() => setOpenSignIn(false)}>
+        <div style={modalStyle} className={classes.paper}>
+          <form className='app__signup'>
+            <img className='app__headerImage' src={logo} alt='logo' />
+
+            <Input
+              type='text'
+              placeholder='email'
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <Input
+              type='password'
+              placeholder='password'
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            <button type='submit' onClick={signIn}>
+              Sign In
+            </button>
+          </form>
+        </div>
+      </Modal>
+
       <div className='app__header'>
         <img className='app__headerImage' src={logo} alt='logo' />
       </div>
-      <button onClick={() => setOpen(true)}>Sign Up</button>
-
+      {user ? (
+        <button onClick={() => auth.signOut()}>Logout</button>
+      ) : (
+        <div className='app__loginContainer'>
+          <button onClick={() => setOpenSignIn(true)}>Sign In</button>
+          <button onClick={() => setOpen(true)}>Sign Up</button>
+        </div>
+      )}
       <h1>Hello world</h1>
 
       {posts.map(({ id, post }) => (

@@ -7,3 +7,5 @@ database - firebase
 2. setting on firebase website 
 
 User authentication - firebase
+
+npm i react-instagram-embed

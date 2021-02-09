@@ -74,14 +74,16 @@ function App() {
   }, [user, username]);
 
   useEffect(() => {
-    db.collection('posts').onSnapshot(snapshot => {
-      setPosts(
-        snapshot.docs.map(doc => ({
-          id: doc.id,
-          post: doc.data(),
-        }))
-      );
-    });
+    db.collection('posts')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        setPosts(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            post: doc.data(),
+          }))
+        );
+      });
   }, []);
 
   const signUp = event => {
@@ -182,6 +184,8 @@ function App() {
           {posts.map(({ id, post }) => (
             <Post
               key={id}
+              postId={id}
+              user={user}
               username={post.username}
               caption={post.caption}
               imageUrl={post.imageUrl}
@@ -191,7 +195,6 @@ function App() {
         <div className='app_postsRight'>
           <InstagramEmbed
             url='https://www.instagram.com/p/CKL_xX9gn02uttMTqrbygsTU1JFc0m4k2ij55U0/'
-            clientAccessToken='123|456'
             maxWidth={320}
             hideCaption={false}
             containerTagName='div'
